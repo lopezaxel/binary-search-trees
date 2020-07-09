@@ -34,14 +34,6 @@ class Tree
     root
   end
 
-  def in_order(root)
-    if root
-      in_order(root.left)
-      p root.data
-      in_order(root.right)
-    end
-  end
-
   def insert(node, root = self.root)
     if root.nil?
       root = Node.new(node)
@@ -62,53 +54,54 @@ class Tree
     end
   end
 
-  def remove(node)
-    parent_node = find_parent_node(self.root, node)
-    target_node = find_node(parent_node, node)
-    
-    if target_node.right.nil? && target_node.left.nil?
-      delete_leaf_node(parent_node, target_node)   
-    elsif !(target_node.right.nil?) && target_node.left.nil? # remove last
-      parent_node.right = target_node.right  
-      target_node = nil
-      p parent_node
-    elsif !(target_node.left.nil?) && target_node.right.nil?
-      parent_node.left = target_node.left
-      target_node = nil
-    end
-  end
- 
-  def delete_leaf_node(parent_node, leaf_node)
-    if parent_node.right == leaf_node
-      parent_node.right = nil
-    else
-      parent_node.left = nil
-    end
-  end 
-
-  def find_node(root, node)
-    if root.right.data == node
-      root.right
-    else
-      root.left
-    end
+  def find_smallest_node(root)
+    root = root.left until root.left.nil?
+    root
   end
 
-  def find_parent_node(root, node)
-    if node == root.data
-      return root
-    elsif node > root.data
-      return root if node == root.right.data
-      find_parent_node(root.right, node) 
+  def remove(node, root = self.root)
+    if root.nil?
+      return nil
+    end
+
+    if node > root.data
+      root.right = remove(node, root.right)
+    elsif node < root.data
+      root.left = remove(node, root.left)
     else
-      return root if node == root.left.data
-      find_parent_node(root.left, node)
+      # Delete leaf node or one-children node
+      if root.left.nil?
+        temp = root.right
+        root = nil
+        return temp
+      elsif root.right.nil?
+        temp = root.left
+        root = nil
+        return temp
+      end
+      
+      # Delete two-children node
+      temp = find_smallest_node(root.right) 
+      
+      root.data = temp.data
+      
+      root.right = remove(temp.data, root.right)
+    end
+
+    root
+  end
+
+  def in_order(root)
+    if root
+      in_order(root.left)
+      p root.data
+      in_order(root.right)
     end
   end
 end
 
 a = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 9, 67, 6345, 324])
 a.in_order(a.root)
-a.insert(19)
+a.remove(8)
 a.in_order(a.root)
 
