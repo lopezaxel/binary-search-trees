@@ -18,51 +18,74 @@ class Tree
 
   def initialize(array)
     @array = array
-    @root = build_tree(array)
+    @root = build_tree(array.uniq.sort)
   end
 
-  def build_tree(list) 
-    root = Node.new(list[0])
+  def build_tree(list, start = 0, end_ar = list.length - 1) 
+    return nil if start > end_ar
 
-    list[1..-1].each do |num|
-      add_node(list, root, Node.new(num)) 
-    end
+    middle = (start + end_ar) / 2
+
+    root = Node.new(list[middle])
+
+    root.left = build_tree(list, start, middle - 1)
+    root.right = build_tree(list, middle + 1, end_ar)
 
     root
   end
 
-  def add_node(list, root, node) 
-    return root if node == root
-    # puts "root #{root.data} node #{node.data}" 
-    
-    if node >= root
-      if root.right.nil?
-        root.right = node
-      else
-        add_node(list, root.right, node) 
-      end
+  def in_order(root)
+    if root
+      in_order(root.left)
+      p root.data
+      in_order(root.right)
+    end
+  end
+
+  def insert(node, root = self.root)
+    if root.nil?
+      root = Node.new(node)
     else
-      if root.left.nil?
-        root.left = node
+      if node > root.data
+        if root.right.nil?
+          root.right = Node.new(node)
+        else
+          insert(node, root.right)
+        end
       else
-        add_node(list, root.left, node)
+        if root.left.nil?
+          root.left = Node.new(node)
+        else
+          insert(node, root.left)
+        end
       end
     end
-    
-    root
-  end
-
-  def insert(node)
-    add_node(self.array, self.root, Node.new(node))
   end
 
   def remove(node)
     parent_node = find_parent_node(self.root, node)
     target_node = find_node(parent_node, node)
     
-    p parent_node, target_node
+    if target_node.right.nil? && target_node.left.nil?
+      delete_leaf_node(parent_node, target_node)   
+    elsif !(target_node.right.nil?) && target_node.left.nil? # remove last
+      parent_node.right = target_node.right  
+      target_node = nil
+      p parent_node
+    elsif !(target_node.left.nil?) && target_node.right.nil?
+      parent_node.left = target_node.left
+      target_node = nil
+    end
   end
-  
+ 
+  def delete_leaf_node(parent_node, leaf_node)
+    if parent_node.right == leaf_node
+      parent_node.right = nil
+    else
+      parent_node.left = nil
+    end
+  end 
+
   def find_node(root, node)
     if root.right.data == node
       root.right
@@ -72,18 +95,20 @@ class Tree
   end
 
   def find_parent_node(root, node)
-     if node == root.data
-       return root
-     elsif node > root.data
-       return root if node == root.right.data
-       find_node(root.right, node) 
-     else
-       return root if node == root.left.data
-       find_node(root.left, node)
-     end
+    if node == root.data
+      return root
+    elsif node > root.data
+      return root if node == root.right.data
+      find_parent_node(root.right, node) 
+    else
+      return root if node == root.left.data
+      find_parent_node(root.left, node)
+    end
   end
 end
+
 a = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 9, 67, 6345, 324])
-# p a.root
-a.remove(3)
+a.in_order(a.root)
+a.insert(19)
+a.in_order(a.root)
 
