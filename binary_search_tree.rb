@@ -109,27 +109,61 @@ class Tree
     end
   end
 
-  def level_order(queue = [].push(self.root))
+  def level_order(array = [], queue = [].push(self.root))
     if queue.empty?
       return  
     end
 
     dequeued_node = queue.shift
-    puts dequeued_node.data
+    array << dequeued_node.data
 
     if dequeued_node.left 
-      queue.push(dequeued_node.left)
+      queue << dequeued_node.left
     end
 
     if dequeued_node.right
-      queue.push(dequeued_node.right)
+      queue << dequeued_node.right
     end
     
-    level_order(queue)
+    level_order(array, queue)
+
+    array
+  end
+
+  def preorder(root = self.root, array = [])
+    return root if root.nil?
+    
+    array << root.data
+    preorder(root.left, array)
+    preorder(root.right, array)
+
+    array
+  end
+
+  def inorder(root = self.root, array = [])
+    return root if root.nil?
+
+    inorder(root.left, array)
+    array << root.data
+    inorder(root.right, array)
+
+    array
+  end
+
+  def postorder(root = self.root, array = [])
+    return root if root.nil?
+
+    postorder(root.left, array)
+    postorder(root.right, array)
+    array << root.data
+    
+    array
   end
 end
 
 aa = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 9, 67, 6345, 324])
 a = Tree.new((1..7).to_a)
-a.level_order
+p a.preorder
+p a.inorder
+p a.postorder
 
