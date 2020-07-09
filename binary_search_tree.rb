@@ -98,10 +98,18 @@ class Tree
       in_order(root.right)
     end
   end
+
+  def find(value, root = self.root)
+    if root.nil? || root.data == value
+      root
+    elsif value > root.data
+      find(value, root.right)
+    else
+      find(value, root.left)
+    end
+  end
 end
 
 a = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 9, 67, 6345, 324])
-a.in_order(a.root)
-a.remove(8)
-a.in_order(a.root)
+p a.find(3)
 
