@@ -108,8 +108,28 @@ class Tree
       find(value, root.left)
     end
   end
+
+  def level_order(queue = [].push(self.root))
+    if queue.empty?
+      return  
+    end
+
+    dequeued_node = queue.shift
+    puts dequeued_node.data
+
+    if dequeued_node.left 
+      queue.push(dequeued_node.left)
+    end
+
+    if dequeued_node.right
+      queue.push(dequeued_node.right)
+    end
+    
+    level_order(queue)
+  end
 end
 
-a = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 9, 67, 6345, 324])
-p a.find(3)
+aa = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 9, 67, 6345, 324])
+a = Tree.new((1..7).to_a)
+a.level_order
 
