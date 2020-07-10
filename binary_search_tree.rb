@@ -159,11 +159,39 @@ class Tree
     
     array
   end
-end
 
-aa = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 9, 67, 6345, 324])
+  def depth(node)
+    if node.nil?
+      return 0
+    end
+    if node.right.nil? && node.left.nil?
+      return 1 
+    end
+    if node.left.nil?
+      return depth(node.right) + 1
+    end
+    if node.right.nil?
+      return depth(node.left) + 1
+    end
+    [depth(node.right), depth(node.left)].min + 1
+  end
+
+  def balanced?(node = self.root)
+    left_subtree = depth(node.left)        
+    right_subtree = depth(node.right)
+
+    if left_subtree == right_subtree || left_subtree == right_subtree + 1 || right_subtree == left_subtree + 1
+      p [left_subtree, right_subtree]
+      true
+    end
+  end
+end
+arr = []
+30.times { arr << rand(500) }
+aa = Tree.new(arr.shuffle)
 a = Tree.new((1..7).to_a)
-p a.preorder
-p a.inorder
-p a.postorder
+p a.depth(a.root)
+p a.balanced?
+p aa.depth(aa.root)
+p aa.balanced?
 
