@@ -1,5 +1,3 @@
-require 'pry'
-
 class Node
   attr_accessor :data, :left, :right
   include Comparable
@@ -179,16 +177,9 @@ class Tree
     end
   end
 
-  def rebalance(tree = self.array)
-    sorted_tree = tree.sort
-    self.root = build_tree(sorted_tree)
-    self.root
-  end
-
-  def pretty_print(node = self.root, prefix="", is_left = true)
-    pretty_print(node.right, "#{prefix}#{is_left ? "│ " : " "}", false) if node.right
-    puts "#{prefix}#{is_left ? "└── " : "┌── "}#{node.data.to_s}"
-    pretty_print(node.left, "#{prefix}#{is_left ? " " : "│ "}", true) if node.left
+  def rebalance
+    array_sorted = level_order.sort
+    self.root = build_tree(array_sorted)
   end
 end
 
@@ -213,4 +204,17 @@ binary_tree.insert(400)
 binary_tree.insert(500)
 
 puts "\nIs the array balanced?: #{binary_tree.balanced?}"
+
+binary_tree.rebalance
+
+puts "\nIs the array balanced?: #{binary_tree.balanced?}"
+
+puts "\nArray in level-order:"
+p binary_tree.level_order
+puts "Array in pre-order:"
+p binary_tree.preorder
+puts "Array in post-order:"
+p binary_tree.postorder
+puts "Array in in-order:"
+p binary_tree.inorder
 
