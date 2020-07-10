@@ -91,14 +91,6 @@ class Tree
     root
   end
 
-  def in_order(root)
-    if root
-      in_order(root.left)
-      p root.data
-      in_order(root.right)
-    end
-  end
-
   def find(value, root = self.root)
     if root.nil? || root.data == value
       root
@@ -173,25 +165,52 @@ class Tree
     if node.right.nil?
       return depth(node.left) + 1
     end
-    [depth(node.right), depth(node.left)].min + 1
+    return [depth(node.right), depth(node.left)].max + 1
   end
 
   def balanced?(node = self.root)
     left_subtree = depth(node.left)        
     right_subtree = depth(node.right)
 
-    if left_subtree == right_subtree || left_subtree == right_subtree + 1 || right_subtree == left_subtree + 1
-      p [left_subtree, right_subtree]
+    if (left_subtree == right_subtree) || (left_subtree == right_subtree + 1)     || (right_subtree == left_subtree + 1)
       true
+    else
+      false
     end
   end
+
+  def rebalance(tree = self.array)
+    sorted_tree = tree.sort
+    self.root = build_tree(sorted_tree)
+    self.root
+  end
+
+  def pretty_print(node = self.root, prefix="", is_left = true)
+    pretty_print(node.right, "#{prefix}#{is_left ? "│ " : " "}", false) if node.right
+    puts "#{prefix}#{is_left ? "└── " : "┌── "}#{node.data.to_s}"
+    pretty_print(node.left, "#{prefix}#{is_left ? " " : "│ "}", true) if node.left
+  end
 end
-arr = []
-30.times { arr << rand(500) }
-aa = Tree.new(arr.shuffle)
-a = Tree.new((1..7).to_a)
-p a.depth(a.root)
-p a.balanced?
-p aa.depth(aa.root)
-p aa.balanced?
+
+random_array = Array.new(15) { rand(100) }
+binary_tree = Tree.new(random_array)
+
+puts "Is the array balanced?: #{binary_tree.balanced?}"
+
+puts "\nArray in level-order:"
+p binary_tree.level_order
+puts "Array in pre-order:"
+p binary_tree.preorder
+puts "Array in post-order:"
+p binary_tree.postorder
+puts "Array in in-order:"
+p binary_tree.inorder
+
+binary_tree.insert(150)
+binary_tree.insert(200)
+binary_tree.insert(300)
+binary_tree.insert(400)
+binary_tree.insert(500)
+
+puts "\nIs the array balanced?: #{binary_tree.balanced?}"
 
